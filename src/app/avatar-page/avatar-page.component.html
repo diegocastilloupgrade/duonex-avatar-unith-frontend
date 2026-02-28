@@ -53,6 +53,14 @@
 
   <div class="avatar-section card">
     <h2>Avatar</h2>
+    <label>
+      Asistente
+      <select [(ngModel)]="selectedAssistant">
+        <option *ngFor="let a of assistants" [value]="a.key">
+          {{ a.label }}
+        </option>
+      </select>
+    </label>
 
     <button
       [disabled]="!canStart || !!unithSession"
