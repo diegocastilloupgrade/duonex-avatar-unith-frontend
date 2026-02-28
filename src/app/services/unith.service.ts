@@ -19,10 +19,11 @@ export class UnithService {
 
   constructor(private http: HttpClient) {}
 
-  createSession(userContext: UserContext, quiz: Quiz): Observable<UnithSessionResponse> {
+  createSession(userContext: UserContext, quiz: Quiz, assistantKey: string): Observable<UnithSessionResponse> {
     return this.http.post<UnithSessionResponse>(`${this.apiBase}/unith/session`, {
       userContext,
-      quiz
+      quiz,
+      assistantKey
     });
   }
 }

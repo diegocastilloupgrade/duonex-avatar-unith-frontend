@@ -17,6 +17,14 @@ export class AvatarPageComponent {
   userForm: FormGroup;
   quizForm: FormGroup;
 
+  assistants = [
+    { key: 'assistant1', label: 'Abril' },
+    { key: 'assistant2', label: 'Alvaro' },
+  ];
+
+  selectedAssistant = 'assistant1';
+
+
   unithSession: UnithSessionResponse | null = null;
   isConnecting = false;
   
@@ -78,7 +86,7 @@ export class AvatarPageComponent {
       }))
     };
 
-    this.unithService.createSession(userContext, quiz).subscribe({
+    this.unithService.createSession(userContext, quiz, this.selectedAssistant).subscribe({
       next: (data) => {
         this.unithSession = data;
         this.debugRaw = data;
