@@ -1,0 +1,29 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.forms {
+  display: flex;
+  gap: 1rem;
+}
+
+.card {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  flex: 1;
+}
+
+.avatar-section {
+  margin-top: 1rem;
+}
+
+.video-wrapper {
+  margin-top: 1rem;
+}
+
+video {
+  width: 100%;
+  max-width: 640px;
+  background: #000;
+}
