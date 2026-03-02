@@ -1,91 +1,145 @@
 <div class="container">
   <h1>Cuestionario con Avatar</h1>
 
-  <div class="forms">
-    <form [formGroup]="userForm" class="card">
-      <h2>Datos de usuario</h2>
-
-      <label>
-        Nombre
-        <input formControlName="nombre" type="text" />
-      </label>
-
-      <label>
-        Edad
-        <input formControlName="edad" type="number" />
-      </label>
-
-      <label>
-        Sexo
-        <select formControlName="sexo">
-          <option value="M">Masculino</option>
-          <option value="F">Femenino</option>
-          <option value="O">Otro</option>
-        </select>
-      </label>
-    </form>
-
-    <form [formGroup]="quizForm" class="card">
-      <h2>Cuestionario</h2>
-
-      <div formArrayName="questions">
-        <div *ngFor="let qGroup of questions.controls; let i = index" [formGroupName]="i">
-          <label>
-            Pregunta {{ i + 1 }}
-            <input formControlName="text" type="text" />
-          </label>
-
-          <label>
-            Interpretación de esta pregunta
-            <input formControlName="interpretation" type="text" />
-          </label>
-
-          <button type="button" (click)="removeQuestion(i)" *ngIf="questions.length > 1">
-            Eliminar
-          </button>
-        </div>
-      </div>
-
-      <button type="button" (click)="addQuestion()">Añadir pregunta</button>
-
-    </form>
-  </div>
-
-  <div class="avatar-section card">
-    <h2>Avatar</h2>
-    <label>
-      Asistente
-      <select [(ngModel)]="selectedAssistant">
-        <option *ngFor="let a of assistants" [value]="a.key">
-          {{ a.label }}
-        </option>
-      </select>
-    </label>
-
-    <button
-      [disabled]="!canStart || !!unithSession"
-      (click)="onStart()">
-      {{ isConnecting ? 'Conectando...' : 'Comenzar' }}
-    </button>
-
+  <!-- Tabs justo debajo del título -->
+  <div class="tabs">
     <button
       type="button"
-      [disabled]="!unithSession"
-      (click)="onStop()">
-      Desconectar
+      [class.active]="activeTab === 'quiz'"
+      (click)="activeTab = 'quiz'">
+      Cuestionario
     </button>
-
-    <!-- En lugar del video LiveKit, usamos un iframe con el publicUrl de Unith -->
-    <div class="video-wrapper" *ngIf="unithSession">
-      <iframe
-        [src]="unithSession.publicUrl | safeUrl"
-        width="100%"
-        height="480"
-        frameborder="0"
-        allow="camera; microphone; autoplay; fullscreen">
-      </iframe>
-    </div>
+    <button
+      type="button"
+      [class.active]="activeTab === 'kb'"
+      (click)="activeTab = 'kb'">
+      Base de conocimiento
+    </button>
   </div>
+
+  <!-- CONTENIDO PESTAÑA CUESTIONARIO -->
+  <ng-container *ngIf="activeTab === 'quiz'">
+
+    <div class="forms">
+      <form [formGroup]="userForm" class="card">
+        <h2>Datos de usuario</h2>
+
+        <label>
+          Nombre
+          <input formControlName="nombre" type="text" />
+        </label>
+
+        <label>
+          Edad
+          <input formControlName="edad" type="number" />
+        </label>
+
+        <label>
+          Sexo
+          <select formControlName="sexo">
+            <option value="M">Masculino</option>
+            <option value="F">Femenino</option>
+            <option value="O">Otro</option>
+          </select>
+        </label>
+      </form>
+
+      <form [formGroup]="quizForm" class="card">
+        <h2>Cuestionario</h2>
+
+        <div formArrayName="questions">
+          <div *ngFor="let qGroup of questions.controls; let i = index" [formGroupName]="i">
+            <label>
+              Pregunta {{ i + 1 }}
+              <input formControlName="text" type="text" />
+            </label>
+
+            <label>
+              Interpretación de esta pregunta
+              <input formControlName="interpretation" type="text" />
+            </label>
+
+            <button type="button" (click)="removeQuestion(i)" *ngIf="questions.length > 1">
+              Eliminar
+            </button>
+          </div>
+        </div>
+
+        <button type="button" (click)="addQuestion()">Añadir pregunta</button>
+      </form>
+    </div>
+
+    <div class="avatar-section card">
+      <h2>Avatar de cuestionario</h2>
+
+      <label>
+        Asistente
+        <select [(ngModel)]="selectedAssistantQuiz" name="assistantQuiz">
+          <option *ngFor="let a of assistantsQuiz" [value]="a.key">
+            {{ a.label }}
+          </option>
+        </select>
+      </label>
+
+      <button
+        [disabled]="!canStartQuiz || !!unithSession"
+        (click)="onStartQuiz()">
+        {{ isConnecting ? 'Conectando...' : 'Comenzar' }}
+      </button>
+
+      <button
+        type="button"
+        [disabled]="!unithSession"
+        (click)="onStop()">
+        Desconectar
+      </button>
+
+      <div class="video-wrapper" *ngIf="unithSession">
+        <iframe
+          [src]="unithSession.publicUrl | safeUrl"
+          width="100%"
+          height="480"
+          frameborder="0"
+          allow="camera; microphone; autoplay; fullscreen">
+        </iframe>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- CONTENIDO PESTAÑA BASE DE CONOCIMIENTO -->
+  <ng-container *ngIf="activeTab === 'kb'">
+    <div class="card">
+      <h2>Asistente de base de conocimiento</h2>
+
+      <p>
+        Este asistente está conectado a la base de conocimiento del tema configurado.
+        Simplemente inicia la conversación cuando estés listo.
+      </p>
+
+      <button
+        [disabled]="!!unithSession || isConnecting"
+        (click)="onStartKb()">
+        {{ isConnecting ? 'Conectando...' : 'Iniciar conversación' }}
+      </button>
+
+      <button
+        type="button"
+        [disabled]="!unithSession"
+        (click)="onStop()">
+        Desconectar
+      </button>
+
+      <div class="video-wrapper" *ngIf="unithSession">
+        <iframe
+          [src]="unithSession.publicUrl | safeUrl"
+          width="100%"
+          height="480"
+          frameborder="0"
+          allow="camera; microphone; autoplay; fullscreen">
+        </iframe>
+      </div>
+    </div>
+  </ng-container>
 
   <div class="card" *ngIf="debugRaw">
     <h2>Debug sesión</h2>
